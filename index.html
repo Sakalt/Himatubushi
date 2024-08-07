@@ -61,16 +61,6 @@
             // 元画像を描画
             ctx.drawImage(image, -radius, -radius, size, size);
 
-            // 紫色の円を描画
-            ctx.globalCompositeOperation = 'source-atop';
-            ctx.beginPath();
-            ctx.arc(0, 0, radius, 0, 2 * Math.PI);
-            ctx.fillStyle = 'purple';
-            ctx.fill();
-
-            ctx.restore();
-        }
-
         function startRotation() {
             const speed = parseFloat(document.getElementById('speed').value);
             rotationInterval = setInterval(() => {
