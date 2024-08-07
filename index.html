@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GIF回転メーカー</title>
+    <title>回転画像ビューア</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -19,76 +19,69 @@
     </style>
 </head>
 <body>
-    <h1>回るｇｉｆジェネレータ</h1>
-    <canvas id="canvas" width="200" height="200"></canvas>
+    <h1>回転画像ビューア</h1>
+    <input type="file" id="imageUpload" accept="image/*">
+    <canvas id="canvas" width="400" height="400"></canvas>
     <div id="controls">
-        <label for="speed">速さ (秒):</label>
+        <label for="speed">回転速度 (秒):</label>
         <input type="number" id="speed" min="0.1" step="0.1" value="0.1">
-        <button onclick="generateGif()">生成</button>
+        <button onclick="startRotation()">回転開始</button>
+        <button onclick="stopRotation()">回転停止</button>
     </div>
-    <a id="downloadLink" download="animated.gif" href="#">ダウンロード GIF</a>
 
     <script>
-        function drawFrame(ctx, angle) {
-            const size = 200;
-            const radius = 80;
-            ctx.clearRect(0, 0, size, size);
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let image = new Image();
+        let angle = 0;
+        let rotationInterval;
+
+        document.getElementById('imageUpload').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    image.src = e.target.result;
+                    image.onload = function() {
+                        drawRotatedImage();
+                    }
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function drawRotatedImage() {
+            const size = Math.min(canvas.width, canvas.height);
+            const radius = size / 2;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.save();
-            ctx.translate(size / 2, size / 2);
+            ctx.translate(canvas.width / 2, canvas.height / 2);
             ctx.rotate(angle * Math.PI / 180);
 
-            // Draw red circle
+            // 元画像を描画
+            ctx.drawImage(image, -radius, -radius, size, size);
+
+            // 紫色の円を描画
+            ctx.globalCompositeOperation = 'source-atop';
             ctx.beginPath();
             ctx.arc(0, 0, radius, 0, 2 * Math.PI);
-            ctx.fillStyle = 'red';
+            ctx.fillStyle = 'purple';
             ctx.fill();
 
-            // Draw blue circle
-            ctx.beginPath();
-            ctx.arc(0, 0, radius, 0, 2 * Math.PI);
-            ctx.fillStyle = 'blue';
-            ctx.globalCompositeOperation = 'destination-out'; // Mask out the red circle
-            ctx.fill();
             ctx.restore();
         }
 
-        function generateGif() {
-            const canvas = document.getElementById('canvas');
-            const ctx = canvas.getContext('2d');
+        function startRotation() {
             const speed = parseFloat(document.getElementById('speed').value);
-            const frames = [];
-            const totalFrames = 36; // 360 degrees / 10 degrees per frame
-
-            for (let i = 0; i < totalFrames; i++) {
-                drawFrame(ctx, i * 10); // Draw each frame with 10 degree rotation
-                frames.push(canvas.toDataURL('image/png'));
-            }
-
-            const gif = new GIF({
-                workers: 2,
-                quality: 10,
-                delay: speed * 1000
-            });
-
-            frames.forEach(frame => {
-                gif.addFrame(frame, {delay: speed * 1000});
-            });
-
-            gif.on('finished', function(blob) {
-                const link = document.getElementById('downloadLink');
-                link.href = URL.createObjectURL(blob);
-                link.style.display = 'inline';
-            });
-
-            gif.render();
+            rotationInterval = setInterval(() => {
+                angle = (angle + 10) % 360; // 10度ずつ回転
+                drawRotatedImage();
+            }, speed * 1000 / 36); // 36フレームで360度回転
         }
 
-        // Include GIF.js library
-        (function() {
-            var script = document.createElement('script');
-            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.min.js';
-            document.head.appendChild(script);
-        })();
+        function stopRotation() {
+            clearInterval(rotationInterval);
+        }
     </script>
 </body>
 </html>
