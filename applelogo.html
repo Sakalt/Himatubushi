@@ -13,29 +13,38 @@
             background-color: #f5f5f5;
             margin: 0;
         }
-        .apple-logo {
-            position: relative;
-            width: 150px;
-            height: 200px;
-            background-color: #333;
-            border-radius: 50% 50% 40% 40%;
-            clip-path: polygon(50% 0%, 75% 10%, 100% 50%, 75% 90%, 50% 100%, 25% 90%, 0% 50%, 25% 10%);
-        }
-        .apple-leaf {
-            position: absolute;
-            top: -40px;
-            left: 50px;
-            width: 60px;
-            height: 80px;
-            background-color: #333;
-            border-radius: 50% 50% 40% 40%;
-            transform: rotate(-45deg);
+        canvas {
+            background-color: transparent;
         }
     </style>
 </head>
 <body>
-    <div class="apple-logo">
-        <div class="apple-leaf"></div>
-    </div>
+    <canvas id="appleCanvas" width="200" height="250"></canvas>
+
+    <script>
+        const canvas = document.getElementById("appleCanvas");
+        const ctx = canvas.getContext("2d");
+
+        function drawAppleLogo() {
+            // リンゴ本体の描画
+            ctx.beginPath();
+            ctx.moveTo(100, 150); // 開始点
+            ctx.bezierCurveTo(50, 50, 150, 50, 100, 150); // 上半分
+            ctx.bezierCurveTo(150, 250, 50, 250, 100, 150); // 下半分
+            ctx.closePath();
+            ctx.fillStyle = "#333";
+            ctx.fill();
+
+            // 葉っぱの描画
+            ctx.beginPath();
+            ctx.moveTo(120, 50);
+            ctx.bezierCurveTo(110, 20, 140, 20, 130, 60); // 葉っぱの曲線
+            ctx.closePath();
+            ctx.fillStyle = "#333";
+            ctx.fill();
+        }
+
+        drawAppleLogo();
+    </script>
 </body>
 </html>
