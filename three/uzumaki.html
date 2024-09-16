@@ -61,15 +61,31 @@
             controls = new THREE.OrbitControls(camera, renderer.domElement);
 
             // 渦巻きのジオメトリを作成
-            const spiralGeometry = new THREE.CylinderGeometry(1, 1, 5, 64, 1, true);
-            spiralGeometry.rotateX(Math.PI / 2); // 渦巻きが立ち上がるように回転
+            const spiralGeometry = new THREE.TorusGeometry(1, 0.2, 100, 100);
+            const numLoops = 10;
+            const height = 1;
+            spiralGeometry.translate(0, -height * numLoops / 2, 0); // 渦巻きを下に配置
 
-            // 渦巻きのマテリアルを作成
-            const goldMaterial = new THREE.MeshStandardMaterial({
+            for (let i = 0; i < numLoops; i++) {
+                const angle = i * (2 * Math.PI / numLoops);
+                spiralGeometry.vertices.forEach(vertex => {
+                    const x = vertex.x;
+                    const y = vertex.y + i * height / numLoops;
+                    const z = vertex.z;
+                    vertex.x = x * Math.cos(angle) - z * Math.sin(angle);
+                    vertex.z = x * Math.sin(angle) + z * Math.cos(angle);
+                    vertex.y = y;
+                });
+            }
+            spiralGeometry.verticesNeedUpdate = true;
+
+            // 渦巻きメッシュを作成
+            const goldMaterial = new THREE.MeshPhysicalMaterial({
                 color: 0xffd700, // 金色
                 metalness: 1,
-                roughness: 0.2,
-                emissive: 0x555555
+                roughness: 0.1,
+                clearcoat: 1,
+                clearcoatRoughness: 0.1
             });
 
             spiral = new THREE.Mesh(spiralGeometry, goldMaterial);
