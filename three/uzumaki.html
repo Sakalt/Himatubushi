@@ -54,22 +54,43 @@
             // レンダラーを設定
             renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0xffffff); // 背景色を白に設定
             document.body.appendChild(renderer.domElement);
 
             // オービットコントロール
             controls = new THREE.OrbitControls(camera, renderer.domElement);
 
             // 渦巻きのジオメトリを作成
-            const spiralGeometry = new THREE.TorusGeometry(1, 0.3, 100, 10);
-            spiralGeometry.translate(0, 0, -0.5); // 中央に調整
+            const spiralGeometry = new THREE.Geometry();
 
-            // 渦巻きメッシュを作成
-            const goldMaterial = new THREE.MeshPhysicalMaterial({
+            // 渦巻きの頂点を作成
+            const numPoints = 100;
+            const radius = 1;
+            const height = 4;
+            for (let i = 0; i <= numPoints; i++) {
+                const angle = 2 * Math.PI * i / numPoints;
+                const x = radius * Math.cos(angle);
+                const y = radius * Math.sin(angle);
+                const z = height * i / numPoints;
+                spiralGeometry.vertices.push(new THREE.Vector3(x, y, z));
+                spiralGeometry.colors.push(new THREE.Color(0xffd700));
+            }
+
+            // 渦巻きの面を作成
+            for (let i = 0; i < numPoints; i++) {
+                spiralGeometry.faces.push(new THREE.Face3(i, i + 1, i + numPoints + 1));
+                spiralGeometry.faces.push(new THREE.Face3(i, i + numPoints + 1, i + numPoints));
+            }
+
+            spiralGeometry.computeFaceNormals();
+            spiralGeometry.computeVertexNormals();
+
+            // マテリアルを作成
+            const goldMaterial = new THREE.MeshStandardMaterial({
                 color: 0xffd700, // 金色
                 metalness: 1,
-                roughness: 0.1,
-                clearcoat: 1,
-                clearcoatRoughness: 0.1
+                roughness: 0.2,
+                emissive: 0x555555
             });
 
             spiral = new THREE.Mesh(spiralGeometry, goldMaterial);
@@ -101,7 +122,6 @@
 
             // 渦巻きの回転処理（縦に回転）
             if (isRotating) {
-                spiral.rotation.x += rotationSpeed;
                 spiral.rotation.y += rotationSpeed;
             }
 
