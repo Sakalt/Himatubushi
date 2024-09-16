@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>神秘的な歯車球</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; }
+        #buttonContainer {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #008cba;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #005f5f;
+        }
+    </style>
+</head>
+<body>
+    <div id="buttonContainer">
+        <button id="rotateButton">回す</button>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        let scene, camera, renderer, gears = [], isRotating = false;
+
+        // 初期化
+        function init() {
+            // シーンを作成
+            scene = new THREE.Scene();
+
+            // カメラを設定
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 5;
+
+            // レンダラーを設定
+            renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            // 球体と歯車を作成
+            const sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
+            const gearMaterial = new THREE.MeshStandardMaterial({ color: 0x7777ff, metalness: 0.7, roughness: 0.2 });
+
+            // 中央の球体
+            const sphere = new THREE.Mesh(sphereGeometry, gearMaterial);
+            scene.add(sphere);
+
+            // 歯車の作成
+            const gearGeometry = new THREE.CylinderGeometry(0.2, 0.2, 0.5, 16);
+            for (let i = 0; i < 8; i++) {
+                const gear = new THREE.Mesh(gearGeometry, gearMaterial);
+                const angle = (i / 8) * Math.PI * 2;
+                gear.position.set(Math.cos(angle) * 2, Math.sin(angle) * 2, 0);
+                gear.rotation.z = angle;
+                gears.push(gear);
+                scene.add(gear);
+            }
+
+            // ライトを追加
+            const light = new THREE.PointLight(0xffffff, 1, 100);
+            light.position.set(10, 10, 10);
+            scene.add(light);
+
+            // ウィンドウリサイズイベント
+            window.addEventListener('resize', onWindowResize, false);
+        }
+
+        // ウィンドウのリサイズ処理
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // アニメーション関数
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // 歯車を回転させる処理
+            if (isRotating) {
+                gears.forEach((gear, index) => {
+                    gear.rotation.x += 0.02;
+                    gear.rotation.y += 0.02 * (index % 2 === 0 ? 1 : -1);
+                });
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // ボタンをクリックしたときの処理
+        document.getElementById('rotateButton').addEventListener('click', function () {
+            isRotating = !isRotating;
+        });
+
+        // 初期化とアニメーションの開始
+        init();
+        animate();
+    </script>
+</body>
+</html>
