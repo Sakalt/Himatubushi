@@ -103,10 +103,10 @@
 
         // 漢字コマンドと対応するJavaScriptの処理
         const commands = {
-            '足す': (a, b) => a + b,
-            '引く': (a, b) => a - b,
-            '掛ける': (a, b) => a * b,
-            '割る': (a, b) => a / b,
+            '増': (a, b) => a + b,
+            '減': (a, b) => a - b,
+            '掛': (a, b) => a * b,
+            '割': (a, b) => a / b,
             '逆関数': (x) => Math.atan(x),
             '逆余弦関数': (x) => Math.acos(x),
             '逆正弦関数': (x) => Math.asin(x),
@@ -115,14 +115,14 @@
             '正接': (x) => Math.tan(x),
             '平方根': (x) => Math.sqrt(x),
             '絶対値': (x) => Math.abs(x),
-            '繰り返す': (condition, code) => {
+            '繰返': (condition, code) => {
                 let result = '';
                 while (eval(condition)) {
                     result += eval(code) + '\n';
                 }
                 return result;
             },
-            '回す': (init, condition, update, code) => {
+            '回': (init, condition, update, code) => {
                 let result = '';
                 for (eval(init); eval(condition); eval(update)) {
                     result += eval(code) + '\n';
@@ -135,10 +135,10 @@
             '表示': (name) => {
                 return variables[name] || '';
             },
-            'ボタン': (text) => {
+            '釦': (text) => {
                 dynamicHTML += `<button>${text}</button>\n`;
             },
-            'テキストエリア': (placeholder) => {
+            '文場': (placeholder) => {
                 dynamicHTML += `<textarea placeholder="${placeholder}"></textarea>\n`;
             },
         };
