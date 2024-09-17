@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5293555695348658" crossorigin="anonymous"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-66520117-2"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'UA-66520117-2');
+</script>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="description" content="Pikkalは、ピカチュウのためのプログラム言語です">
+<meta property="og:title" content="Pikkal - ピカチュウのためのプログラム言語">
+<meta property="og:type" content="website">
+<meta property="og:image" content="">
+<meta property="og:url" content="https://pikkal.needless.work/">
+<meta property="ag:description" content="Pikkalは、ピカチュウのためのプログラム言語です">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no, viewport-fit=cover">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css" />
+<link rel="stylesheet" href="https://needless.work/pikkal/res/pikkal.css">
+<script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://needless.work/pikkal/res/pikkal.js"></script>
+<title>Pikkal - ピカチュウのためのプログラム言語</title>
+</head>
+<body ontouchstart="">
+<div id="fb-root"></div>
+<script async defer>(function(d, s, id) {
+var js, fjs = d.getElementsByTagName(s)[0];
+if (d.getElementById(id)) return;
+js = d.createElement(s); js.id = id;
+js.src = 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0';
+fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+<script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async defer></script>
+<script src="https://platform.twitter.com/widgets.js" charset="utf-8" async defer></script>
+<script type="text/javascript" charset="utf-8" async defer>
+!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");
+j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";
+var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");
+</script>
+
+<div id="open-sub-menu">
+<span class="line"></span>
+<span class="line"></span>
+</div>
+<div id="sub-menu">
+<ul>
+<li><a href="https://twitter.com/giemsa_orz" target="_blank">giemsa_orz</a></li>
+<li><a href="https://github.com/Giemsa" target="_blank">Giemsa</a></li>
+<li><a href="https://jumble-note.blogspot.com/" target="_blank">jumble note</a></li>
+<li><a href="https://needless.work/" target="_blank">needles work</a></li>
+<li><a id="m"></a></li>
+</ul>
+</div>
+<header>
+<div class="logo">ピカチュウのためのプログラム言語</div>
+
+</header>
+<div class="header-menu">
+<ul class="share-buttons">
+<li><div class="fb-like" data-href="https://sakalt.github.io/himatubushi/?.html" data-layout="button_count" data-action="like" data-size="small" data-show-faces="false" data-share="true"></div></li>
+<li><a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-url="https://pikkal.needless.work/" data-show-count="false" data-lang="en"></a></li>
+<li><a href="http://b.hatena.ne.jp/entry/s/pikkal.needless.work/" class="hatena-bookmark-button" data-hatena-bookmark-layout="basic-counter" title="このエントリーをはてなブックマークに追加"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a></li>
+<li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en" data-save-url="https://pikkal.needless.work/"></a></li>
+</ul>
+
+<ins class="adsbygoogle"
+style="display:block"
+data-ad-client="ca-pub-5293555695348658"
+data-ad-slot="5527517836"
+data-ad-format="horizontal"
+data-full-width-responsive="false"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div>
+
+<div id="alt-message">
+<h2>ご利用のブラウザはサポートされていません</h2>
+<p>
+このサービスを利用するためには、WebAssemblyが動作する環境が必要です。<br>
+最新版のGoogle Chrome、FireFox、Safari、またはMicrosoft Edgeをご利用ください。
+</p>
+</div>
+<div id="main-content">
+<div class="code-box drawer-menu-container">
+<textarea id="code-area">ピカーピカチャァ～♪ピカピーカ
+ピッカチュウー?ピカ?ピカ！ピカ??ピカピッカピッカチュウーピカピッカー！
+ピカ！ピーカッチュピカ！ピカ?ピカチュウーピーカ、チューウ?ピカチュウーピカーチュピカピカ
+ピカー、チュウー！ピカピピーカチュウチャァ～♪ピカーピカピカーチュウチャァ～♪
+ピカピッカピーカッチュピカァピカピカカ
+ピカピーカピッカーピカチュピピカチュウー?ピカーピカ！ピカ?
+ピカカピカピッカピッカピカァピカピカッチュピカピーカピッカチュウーピカピッカー?チャァ～♪ピカカ
+ピッカッチュウピカァピカチャァ～♪ピカチュウーピッカチャァ～♪
+ピカチュピカーピカピカピカ！ピカピッカピーカチュピカピカーチュ！
+ピカッチュウピカピピカッチュピーカチュウチャァ～♪ピカピピカカピィカァ
+ピッカピカチュウピピカチュウピカ！！ピカピカーチュ
+ピカ！ピカピピーカッチュ！ピカァピカ
+ピカー、チュウー?ピカピピーカピカピカーチュピカカ?ピカピカピッカピカチュピ！
+ピカチュピカカピカーピカ?ピカーカ
+ピカピーカピーカチュ！ピカピカピカー
+ピカピッカー?ピピッカチュウピカーピカピーカピカー、チュウー！
+ピーカピカチュピチャァ～♪ピカチュウーピカー、チュウー?
+ピカーピカピカー！ピカピッカー?ピピカァピカピカカピカピピカッチュ
+ピーカカピカピカピピッピカピカチュウピッカーチュウ?
+ピカチュウーピカーカピカァピカピカッチュウピカピッカー！ピッカチュピッカピーカカピピピー
+ピッピカピカチャァ～♪ピカーピカ！ピカッチュピカピカピピカチュピ?ピカチュピカーチュウ
+ピカ！ピカ?ピカーカピカピッカピカーチュピーカチャァ～♪
+ピカピカチューピッカピカチュウピカ！！ピカピカチュウピカチュウーピカチュ</textarea>
+<div class="code-menu-area drawer-menu">
+<div id="code-menu" class="drawer-menu-tab"><span></span></div>
+<ul class="code-menu-list drawer-menu-content">
+<li id="clear-code">コードを消す</li>
+<li>サンプルコード
+<ul id="code-list">
+<li data-name="hello">Hello, Pikachu!</li>
+<li data-name="fib">フィボナッチ数(再帰)</li>
+<li data-name="hanoi">ハノイの塔</li>
+<li data-name="guessing">数当てゲーム</li>
+<li data-name="time">今何時?</li>
+</ul>
+</li>
+<li onclick="location.href='#document'">ドキュメントを見る</li>
+</ul>
+</div>
+</div>
+<button id="exec">動かす</button>
+<div class="console drawer-menu-container">
+<div id="output-area"></div>
+<div class="console-menu drawer-menu">
+<div class="drawer-menu-tab"><span></span></div>
+<ul class="drawer-menu-content">
+<li id="clear-console">実行結果を消す</li>
+</ul>
+</div>
+</div>
+<div id="document">
+<h1>Pikkal</h1>
+<h2>概要</h2>
+<p>
+　Pikkalは、ピカチュウのために開発されたプログラム言語です。
+</p>
+<h2>言語について</h2>
+<p>
+　Pikkalは、「ピ」「ピカ」「ピカチュ」の3種類のトークンを使用してプログラムを記述するプログラム言語、およびそれを実行するためのスタックベースの仮想マシンです。これら3種類の組み合わせによって様々な<a href="#doc-commands">命令</a>を記述することができます。Pikkalでは、先述の3種類のトークン以外はすべて無視されます。また、一部の命令では引数を取ります。引数は、命令の後に続けて記述します。
+</p>
+<h2 id="doc-commands">命令一覧</h2>
+<div class="command-table first-table">
+<div class="command-category">スタック操作</div>
+<div class="command-list">
+<div>
+<div>
+<div>命令</div>
+<div>引数</div>
+</div>
+<div class="command-description">説明</div>
+</div>
+<div>
+<div>
+<div>ピカ ピカ</div>
+<div><a href="#doc-number">数値</a></div>
+</div>
+<div>指定された数値をスタックのトップに積みます</div>
+</div>
+<div>
+<div>
+<div>ピカ ピカチュ ピカ</div>
+<div>-</div>
+</div>
+<div>スタックのトップを複製します</div>
+</div>
+<div>
+<div>
+<div>ピカ ピ ピカ</div>
+<div><a href="#doc-number">数値</a></div>
+</div>
+<div>スタックの指定された位置の要素を複製し、トップに積みます</div>
+</div>
+<div>
+<div>
+<div>ピカ ピカチュ ピ</div>
+<div>-</div>
+</div>
+<div>スタックのトップと、その次の要素を入れ替えます</div>
+</div>
+<div>
+<div>
+<div>ピカ ピカチュ ピカチュ</div>
+<div>-</div>
+</div>
+<div>スタックのトップの要素を破棄します</div>
+</div>
+<div>
+<div>
+<div>ピカ ピ ピカチュ</div>
+<div><a href="#doc-number">数値</a></div>
+</div>
+<div>スタックの2番目から、指定された数の要素を削除します</div>
+</div>
+</div>
+</div>
+<div class="command-table">
+<div class="command-category">算術演算</div>
+<div class="command-list">
+<div>
+<div>
+<div>命令</div>
+<div>引数</div>
+</div>
+<div class="command-description">説明</div>
+</div>
+<div>
+<div>
+<div>ピ ピカ ピカ ピカ</div>
+<div>-</div>
+</div>
+<div>スタックのトップ2要素を加算し、結果をトップに積みます</div>
+</div>
+<div>
+<div>
+<div>ピ ピカ ピカ ピ</div>
+<div>-</div>
+</div>
+<div>スタックのトップ2要素を減算し、結果をトップに積みます</div>
+</div>
+<div>
+<div>
+<div>ピ ピカ ピカ ピカチュ</div>
+<div>-</div>
+</div>
+<div>スタックのトップ2要素を乗算し、結果をトップに積みます</div>
+</div>
+<div>
+<div>
+<div>ピ ピカ ピ ピカ</div>
+<div>-</div>
+</div>
+<div>スタックのトップ2要素を除算し、結果をトップに積みます</div>
+</div>
+<div>
+<div>
+<div>ピ ピカ ピ ピ</div>
+<div>-</div>
+</div>
+<div>スタックのトップ2要素の剰余を計算し、結果をトップに積みます</div>
+</div>
+</div>
+</div>
+<div class="command-table">
+<div class="command-category">組み込み命令</div>
+<div class="command-list">
+<div>
+<div>
+<div>命令</div>
+<div>引数</div>
+</div>
+<div class="command-description">説明</div>
+</div>
+<div>
+<div>
+<div>ピ ピカ ピカチュ ピカ</div>
+<div>-</div>
+</div>
+<div>[0,スタックのトップ) の範囲の乱数を生成し、スタックのトップに積みます</div>
+</div>
+<div>
+<div>
+<div>ピ ピカ ピカチュ ピ</div>
+<div>-</div>
+</div>
+<div>現在時刻のUnix時間をスタックのトップに積みます</div>
+</div>
+</div>
+</div>
+<div class="command-table">
+<div class="command-category">ヒープアクセス</div>
+<div class="command-list">
+<div>
+<div>
+<div>命令</div>
+<div>引数</div>
+</div>
+<div class="command-description">説明</div>
+</div>
+<div>
+<div>
+<div>ピ ピ ピカ</div>
+<div>-</div>
+</div>
+<div>スタックの2番目の値をスタックのトップに入っているアドレスに保存します</div>
+</div>
+<div>
+<div>
+<div>ピ ピ ピ</div>
+<div>-</div>
+</div>
+<div>スタックのトップに入っているアドレスから値を取得して、スタックのトップを取得した値に置き換えます</div>
+</div>
+</div>
+</div>
+<div class="command-table">
+<div class="command-category">フロー制御</div>
+<div class="command-list">
+<div>
+<div>
+<div>命令</div>
+<div>引数</div>
+</div>
+<div class="command-description">説明</div>
+</div>
+<div>
+<div>
+<div>ピカチュ ピカ ピカ</div>
+<div><a href="#doc-label">ラベル</a></div>
+</div>
+<div>ラベルを定義します</div>
+</div>
+<div>
+<div>
+<div>ピカチュ ピカ ピ</div>
+<div><a href="#doc-label">ラベル</a></div>
+</div>
+<div>サブルーチンを呼び出します</div>
+</div>
+<div>
+<div>
+<div>ピカチュ ピカ ピカチュ</div>
+<div><a href="#doc-label">ラベル</a></div>
+</div>
+<div>無条件でラベルにジャンプします</div>
+</div>
+<div>
+<div>
+<div>ピカチュ ピ ピカ</div>
+<div><a href="#doc-label">ラベル</a></div>
+</div>
+<div>スタックのトップが0のとき、ラベルにジャンプします</div>
+</div>
+<div>
+<div>
+<div>ピカチュ ピ ピ</div>
+<div><a href="#doc-label">ラベル</a></div>
+</div>
+<div>スタックのトップが負の値(v &lt; 0)のとき、ラベルにジャンプします</div>
+</div>
+<div>
+<div>
+<div>ピカチュ ピ ピカチュ</div>
+<div>-</div>
+</div>
+<div>サブルーチンから呼び出し元へ制御を返します</div>
+</div>
+<div>
+<div>
+<div>ピカチュ ピカチュ ピカチュ</div>
+<div>-</div>
+</div>
+<div>プログラムを終了します</div>
+</div>
+</div>
+</div>
+<div class="command-table">
+<div class="command-category">入出力</div>
+<div class="command-list">
+<div>
+<div>
+<div>命令</div>
+<div>引数</div>
+</div>
+<div class="command-description">説明</div>
+</div>
+<div>
+<div>
+<div>ピ ピカチュ ピカ ピカ</div>
+<div>-</div>
+</div>
+<div>スタックのトップの値を文字列(UTF-16)として出力します</div>
+</div>
+<div>
+<div>
+<div>ピ ピカチュ ピカ ピ</div>
+<div>-</div>
+</div>
+<div>スタックのトップの値を出力します</div>
+</div>
+<div>
+<div>
+<div>ピ ピカチュ ピ ピカ</div>
+<div>-</div>
+</div>
+<div>文字を読み込み、スタックのトップに入っているアドレスに保存します</div>
+</div>
+<div>
+<div>
+<div>ピ ピカチュ ピ ピ</div>
+<div>-</div>
+</div>
+<div>数値を読み込み、スタックのトップに入っているアドレスに保存します</div>
+</div>
+</div>
+</div>
+<h2>数値とラベルの表現</h2>
+<h3 id="doc-number">数値</h3>
+<p>
+　Pikkalにおける数値は、以下のようなフォーマットで表現されます。
+</p>
+<code>
+[符号部][数値部]ピカチュ
+</code>
+<p>
+　符号部では、「ピカ」が正(+)、「ピ」が負(-)を表現します。数値部では、「ピカ」を0、「ピ」を1として、31ビットの整数として表現します。2の補数表現ではないことに注意してください。
+</p>
+<code>
+ピカ ピピカピピカ ピカチュ = +1010 = 10
+</code>
+<h3 id="doc-label">ラベル</h3>
+<p>
+　ラベルは以下のようなフォーマットで表現されます。　
+</p>
+<code>
+[ラベル]ピカチュ
+</code>
+<p>
+　ラベルは「ピカ」と「ピ」の組み合わせで表現します。
+</p>
+<h2>その他</h2>
+<p>
+　ご意見ご要望は <a href="https://twitter.com/giemsa_orz" target="_blank">@giemsa_orz</a> まで。面白いプログラムができたらぜひご連絡ください！<br>エンジニア向けポエムは<a href="https://jumble-note.blogspot.com/2018/07/blog-post.html" target="_blank">こちら</a>
+</p>
+</div>
+</div>
+
+<ins class="adsbygoogle"
+style="display:block"
+data-ad-client="ca-pub-5293555695348658"
+data-ad-slot="5527517836"
+data-ad-format="horizontal"
+data-full-width-responsive="true"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+<footer>
+&copy; 2018 - 2022 <a href="//needless.work">needless work</a>
+</footer>
+
+<div id="overlay"></div>
+</body>
+</html>
