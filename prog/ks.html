@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanjiscript IDE</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            margin-bottom: 10px;
+            font-family: monospace;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .output {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            white-space: pre-wrap;
+        }
+        .list {
+            margin-top: 20px;
+        }
+        .list button {
+            background-color: #f44336;
+            padding: 5px 10px;
+        }
+        .list button:hover {
+            background-color: #e53935;
+        }
+        .dynamic-elements {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Kanjiscript IDE</h1>
+<textarea id="code" placeholder="ここにKanjiscriptコードを入力"></textarea>
+<br>
+<button onclick="saveCode()">コードを保存</button>
+<button onclick="runCode()">コードを実行</button>
+
+<div class="list" id="codeList"></div>
+<div class="output" id="output"></div>
+<div class="dynamic-elements" id="dynamicElements"></div>
+
+<script>
+    // ローカルストレージに保存されているコードを表示する
+    function loadCodeList() {
+        const codeList = document.getElementById('codeList');
+        codeList.innerHTML = '';
+        const savedCodes = Object.keys(localStorage);
+        savedCodes.forEach(name => {
+            const div = document.createElement('div');
+            div.textContent = name;
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = '削除';
+            deleteButton.onclick = () => {
+                localStorage.removeItem(name);
+                loadCodeList();
+            };
+            div.appendChild(deleteButton);
+            codeList.appendChild(div);
+        });
+    }
+
+    // コードをローカルストレージに保存する
+    function saveCode() {
+        const name = prompt('コードの名前を入力してください:');
+        if (name) {
+            const code = document.getElementById('code').value;
+            localStorage.setItem(name, code);
+            loadCodeList();
+        }
+    }
+
+    // Kanjiscriptコードを実行する
+    function runCode() {
+        const code = document.getElementById('code').value;
+        let output = '';
+        let dynamicHTML = '';
+        const lines = code.split('\n');
+        const variables = {}; // 変数を保存するオブジェクト
+
+        // 漢字コマンドと対応するJavaScriptの処理
+        const commands = {
+            '足す': (a, b) => a + b,
+            '引く': (a, b) => a - b,
+            '掛ける': (a, b) => a * b,
+            '割る': (a, b) => a / b,
+            '逆関数': (x) => Math.atan(x),
+            '逆余弦関数': (x) => Math.acos(x),
+            '逆正弦関数': (x) => Math.asin(x),
+            '正弦': (x) => Math.sin(x),
+            '余弦': (x) => Math.cos(x),
+            '正接': (x) => Math.tan(x),
+            '平方根': (x) => Math.sqrt(x),
+            '絶対値': (x) => Math.abs(x),
+            '繰り返す': (condition, code) => {
+                let result = '';
+                while (eval(condition)) {
+                    result += eval(code) + '\n';
+                }
+                return result;
+            },
+            '回す': (init, condition, update, code) => {
+                let result = '';
+                for (eval(init); eval(condition); eval(update)) {
+                    result += eval(code) + '\n';
+                }
+                return result;
+            },
+            '定義': (name, value) => {
+                variables[name] = value;
+            },
+            '表示': (name) => {
+                return variables[name] || '';
+            },
+            'ボタン': (text) => {
+                dynamicHTML += `<button>${text}</button>\n`;
+            },
+            'テキストエリア': (placeholder) => {
+                dynamicHTML += `<textarea placeholder="${placeholder}"></textarea>\n`;
+            },
+        };
+
+        // コード内のコマンドを処理
+        lines.forEach(line => {
+            const trimmedLine = line.trim();
+            const [command, ...args] = trimmedLine.split(' ');
+            const parsedArgs = args.map(arg => arg.trim());
+
+            if (commands[command]) {
+                const result = commands[command](...parsedArgs);
+                if (command === '繰り返す' || command === '回す') {
+                    output += result;
+                } else {
+                    output += `${trimmedLine} = ${result}\n`;
+                }
+            } else {
+                output += `// 未知のコマンド: ${trimmedLine}\n`;
+            }
+        });
+
+        document.getElementById('output').textContent = output;
+        document.getElementById('dynamicElements').innerHTML = dynamicHTML;
+    }
+
+    // ページ読み込み時にローカルストレージのコードリストを読み込む
+    window.onload = loadCodeList;
+</script>
+
+</body>
+</html>
