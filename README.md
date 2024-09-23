@@ -5,3 +5,4 @@ https://sakalt.github.io/Himatubushi/three/uzumaki.html
 https://sakalt.github.io/Himatubushi/three/henkei/cloverphere.html
 https://sakalt.github.io/Himatubushi/prog/1.html
 https://sakalt.github.io/Himatubushi/prog/kanjiscript.html
+https://sakalt.github.io/Himatubushi/three/hakai/magictrackpad.html
