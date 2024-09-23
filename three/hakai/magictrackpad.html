@@ -33,11 +33,11 @@
 
     <script>
         let scene, camera, renderer;
-        let trackpad, hammer;
+        let trackpad, hammer, rubberFeet = [];
         let hammerPosition = { x: 0, y: 5, z: 0 };
         let physicsWorld, rigidBodies = [];
         let tmpTrans;
-        
+
         // Ammo.js 初期化後にシーンをセットアップ
         Ammo().then(init);
 
@@ -69,6 +69,9 @@
             trackpad = createTrackpad();
             scene.add(trackpad);
 
+            // ゴム足を作成
+            createRubberFeet();
+
             // ハンマーを作成
             hammer = createHammer();
             scene.add(hammer);
@@ -90,6 +93,33 @@
             createRigidBody(trackpadMesh, shape, mass);
 
             return trackpadMesh;
+        }
+
+        // ゴム足の作成と配置
+        function createRubberFeet() {
+            const rubberFootGeometry = new THREE.CylinderGeometry(0.2, 0.2, 0.1, 32);
+            const rubberFootMaterial = new THREE.MeshBasicMaterial({ color: '#333333' });
+
+            // 4つのゴム足をトラックパッドの四隅に配置
+            const positions = [
+                [-2.3, -0.05, -3.3],  // 左前
+                [2.3, -0.05, -3.3],   // 右前
+                [-2.3, -0.05, 3.3],   // 左後
+                [2.3, -0.05, 3.3]     // 右後
+            ];
+
+            positions.forEach(pos => {
+                const rubberFoot = new THREE.Mesh(rubberFootGeometry, rubberFootMaterial);
+                rubberFoot.position.set(pos[0], pos[1], pos[2]);
+
+                // Ammo.js の物理設定
+                const mass = 0;  // 静的なオブジェクト
+                const shape = new Ammo.btCylinderShape(new Ammo.btVector3(0.2, 0.05, 0.2));
+                createRigidBody(rubberFoot, shape, mass);
+
+                rubberFeet.push(rubberFoot);
+                scene.add(rubberFoot);
+            });
         }
 
         // ハンマーの作成
@@ -189,13 +219,6 @@
 
             renderer.render(scene, camera);
         }
-
-        // ウィンドウサイズの変更に対応
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
     </script>
 </body>
 </html>
