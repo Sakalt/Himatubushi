@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magic Trackpad 破壊シミュレーション</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+        #controls {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 10;
+        }
+        button {
+            display: block;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="controls">
+        <button onclick="moveHammer('up')">上に動かす</button>
+        <button onclick="moveHammer('down')">下に動かす</button>
+        <button onclick="moveHammer('left')">左に動かす</button>
+        <button onclick="moveHammer('right')">右に動かす</button>
+        <button onclick="useLaser()">レーザーを発射</button>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ammo.js/0.0.10/ammo.js"></script>
+    <script>
+        let scene, camera, renderer;
+        let trackpad, hammer, laser;
+        let physicsWorld;
+        let hammerBody, laserActive = false;
+
+        // Ammo.jsのオブジェクトを作成
+        Ammo().then(() => {
+            init();
+            animate();
+        });
+
+        // 初期化
+        function init() {
+            // シーンとカメラ、レンダラーを作成
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            // 物理ワールドの初期化
+            const collisionConfiguration = new Ammo.btDefaultCollisionConfiguration();
+            const dispatcher = new Ammo.btCollisionDispatcher(collisionConfiguration);
+            const broadphase = new Ammo.btDbvtBroadphase();
+            const solver = new Ammo.btSequentialImpulseConstraintSolver();
+            physicsWorld = new Ammo.btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
+            physicsWorld.setGravity(new Ammo.btVector3(0, -9.8, 0));
+
+            // Magic Trackpadの板
+            const geometry = new THREE.BoxGeometry(5, 0.1, 7);
+            const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+            trackpad = new THREE.Mesh(geometry, material);
+            scene.add(trackpad);
+
+            // Ammo.js物理形状を設定
+            const trackpadShape = new Ammo.btBoxShape(new Ammo.btVector3(2.5, 0.05, 3.5));
+            const trackpadTransform = new Ammo.btTransform();
+            trackpadTransform.setIdentity();
+            trackpadTransform.setOrigin(new Ammo.btVector3(0, 0, 0));
+            const trackpadMass = 0;
+            const trackpadLocalInertia = new Ammo.btVector3(0, 0, 0);
+            const trackpadMotionState = new Ammo.btDefaultMotionState(trackpadTransform);
+            const trackpadRbInfo = new Ammo.btRigidBodyConstructionInfo(trackpadMass, trackpadMotionState, trackpadShape, trackpadLocalInertia);
+            const trackpadBody = new Ammo.btRigidBody(trackpadRbInfo);
+            physicsWorld.addRigidBody(trackpadBody);
+
+            // ハンマーの作成
+            const hammerGeometry = new THREE.BoxGeometry(1, 3, 1);
+            const hammerMaterial = new THREE.MeshBasicMaterial({ color: 0x888888 });
+            hammer = new THREE.Mesh(hammerGeometry, hammerMaterial);
+            hammer.position.set(0, 2, 0);
+            scene.add(hammer);
+
+            // Ammo.jsでハンマーの物理形状を設定
+            const hammerShape = new Ammo.btBoxShape(new Ammo.btVector3(0.5, 1.5, 0.5));
+            const hammerTransform = new Ammo.btTransform();
+            hammerTransform.setIdentity();
+            hammerTransform.setOrigin(new Ammo.btVector3(0, 2, 0));
+            const hammerMass = 5;
+            const hammerLocalInertia = new Ammo.btVector3(0, 0, 0);
+            hammerShape.calculateLocalInertia(hammerMass, hammerLocalInertia);
+            const hammerMotionState = new Ammo.btDefaultMotionState(hammerTransform);
+            const hammerRbInfo = new Ammo.btRigidBodyConstructionInfo(hammerMass, hammerMotionState, hammerShape, hammerLocalInertia);
+            hammerBody = new Ammo.btRigidBody(hammerRbInfo);
+            physicsWorld.addRigidBody(hammerBody);
+
+            // レーザー用ライン
+            const laserMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
+            const laserGeometry = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, -10)]);
+            laser = new THREE.Line(laserGeometry, laserMaterial);
+            laser.visible = false; // 初期状態は非表示
+            scene.add(laser);
+
+            // カメラ位置
+            camera.position.z = 10;
+        }
+
+        // ハンマーを上下左右に動かす
+        function moveHammer(direction) {
+            switch (direction) {
+                case 'up':
+                    hammer.position.y += 1;
+                    break;
+                case 'down':
+                    hammer.position.y -= 1;
+                    break;
+                case 'left':
+                    hammer.position.x -= 1;
+                    break;
+                case 'right':
+                    hammer.position.x += 1;
+                    break;
+            }
+            updateHammerPhysics();
+        }
+
+        // レーザーを使用
+        function useLaser() {
+            laserActive = true;
+            laser.visible = true;
+        }
+
+        // ハンマーの物理的な位置を更新
+        function updateHammerPhysics() {
+            const transform = new Ammo.btTransform();
+            transform.setIdentity();
+            transform.setOrigin(new Ammo.btVector3(hammer.position.x, hammer.position.y, hammer.position.z));
+            hammerBody.setWorldTransform(transform);
+        }
+
+        // アニメーションループ
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Ammo.js物理シミュレーションをステップ
+            physicsWorld.stepSimulation(1 / 60, 10);
+
+            // レーザーがアクティブな場合、トラックパッドを破壊
+            if (laserActive) {
+                trackpad.material.color.set(0xff0000); // 赤く焼けるエフェクト
+                laserActive = false;
+                setTimeout(() => laser.visible = false, 500); // レーザーを短時間表示
+            }
+
+            renderer.render(scene, camera);
+        }
+    </script>
+</body>
+</html>
