@@ -20,36 +20,32 @@
 </head>
 <body>
     <div id="controls">
-        <button onclick="showHammer()">ハンマーで叩く</button>
         <button onclick="moveHammer('up')">上に動かす</button>
         <button onclick="moveHammer('down')">下に動かす</button>
         <button onclick="moveHammer('left')">左に動かす</button>
         <button onclick="moveHammer('right')">右に動かす</button>
-        <button onclick="useLaser()">レーザーを発射</button>
-        <button onclick="hitTrackpad()">叩いて破壊する</button>
+        <button onclick="useHammer()">ハンマーを使用</button>
     </div>
 
-    <!-- Three.js と Ammo.js の読み込み (jsdelivrを使用) -->
+    <!-- Three.js と Ammo.js の読み込み -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ammo.js@0.0.10/ammo.js"></script>
 
     <script>
         let scene, camera, renderer;
-        let trackpad, hammer, laser;
-        let hammerPosition = { x: 0, y: 5, z: 0 };  // ハンマーの初期位置
+        let trackpad, hammer;
+        let hammerPosition = { x: 0, y: 5, z: 0 };
         let physicsWorld, rigidBodies = [];
         let tmpTrans;
-        let laserActive = false;
-
-        // Ammo.jsの読み込みが完了したら初期化
+        
+        // Ammo.js 初期化後にシーンをセットアップ
         Ammo().then(init);
 
         function init() {
-            // Three.jsの基本セットアップ
+            // Three.js 基本セットアップ
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(0, 10, 20);  // カメラの位置を調整
-            camera.lookAt(0, 0, 0);  // トラックパッドの中心を見る
+            camera.position.set(0, 5, 15);  // カメラを適切に配置
 
             renderer = new THREE.WebGLRenderer();
             renderer.setSize(window.innerWidth, window.innerHeight);
@@ -60,7 +56,7 @@
             light.position.set(5, 10, 7.5);
             scene.add(light);
 
-            // Ammo.jsの物理シミュレーション初期化
+            // Ammo.js の物理世界をセットアップ
             tmpTrans = new Ammo.btTransform();
             let collisionConfiguration = new Ammo.btDefaultCollisionConfiguration();
             let dispatcher = new Ammo.btCollisionDispatcher(collisionConfiguration);
@@ -69,25 +65,15 @@
             physicsWorld = new Ammo.btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
             physicsWorld.setGravity(new Ammo.btVector3(0, -10, 0));
 
-            // Trackpad (板部分) の作成と物理設定
+            // Trackpad を作成
             trackpad = createTrackpad();
             scene.add(trackpad);
 
-            // ハンマーの作成（最初は非表示）
+            // ハンマーを作成
             hammer = createHammer();
-            hammer.visible = false;
             scene.add(hammer);
 
-            // レーザーの作成
-            const laserMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
-            const laserGeometry = new THREE.BufferGeometry().setFromPoints([
-                new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, -10)
-            ]);
-            laser = new THREE.Line(laserGeometry, laserMaterial);
-            laser.visible = false;  // 初期状態は非表示
-            scene.add(laser);
-
-            // アニメーションの開始
+            // レンダリングループを開始
             animate();
         }
 
@@ -98,8 +84,8 @@
             const trackpadMesh = new THREE.Mesh(trackpadGeometry, trackpadMaterial);
             trackpadMesh.position.set(0, 0, 0);
 
-            // 物理設定
-            const mass = 0;
+            // Ammo.js の物理設定
+            const mass = 0;  // 静的なオブジェクト
             const shape = new Ammo.btBoxShape(new Ammo.btVector3(2.5, 0.05, 3.5));
             createRigidBody(trackpadMesh, shape, mass);
 
@@ -113,7 +99,7 @@
             const hammerMesh = new THREE.Mesh(hammerGeometry, hammerMaterial);
             hammerMesh.position.set(hammerPosition.x, hammerPosition.y, hammerPosition.z);
 
-            // 物理設定
+            // Ammo.js の物理設定
             const mass = 2;
             const shape = new Ammo.btBoxShape(new Ammo.btVector3(0.5, 1.5, 0.5));
             createRigidBody(hammerMesh, shape, mass);
@@ -121,7 +107,7 @@
             return hammerMesh;
         }
 
-        // Ammo.jsの剛体を作成する関数
+        // Ammo.js の剛体を作成する
         function createRigidBody(object, physicsShape, mass) {
             const pos = object.position;
             const quat = object.quaternion;
@@ -147,16 +133,9 @@
             }
         }
 
-        // ハンマーを表示する関数
-        function showHammer() {
-            hammer.visible = true;
-        }
-
         // ハンマーを上下左右に動かす関数
         function moveHammer(direction) {
-            if (!hammer.visible) return;  // ハンマーが表示されていなければ動かない
-
-            const velocity = 1;  // 移動量
+            const velocity = 0.5;  // 動く速度
             switch (direction) {
                 case 'up':
                     hammerPosition.y += velocity;
@@ -174,52 +153,37 @@
             hammer.position.set(hammerPosition.x, hammerPosition.y, hammerPosition.z);
         }
 
-        // レーザーを使用する関数
-        function useLaser() {
-            laser.position.set(hammerPosition.x, hammerPosition.y, hammerPosition.z);
-            laser.visible = true;
-            setTimeout(() => laser.visible = false, 500);  // 500ms間だけレーザーを表示
-        }
-
-        // Trackpadを部分的に破壊する
-        function hitTrackpad() {
-            // 破壊位置をランダムに決定（ハンマーの位置に基づく）
-            const breakPositionX = hammerPosition.x + (Math.random() * 0.5 - 0.25);
-            const breakPositionZ = hammerPosition.z + (Math.random() * 0.5 - 0.25);
-
+        // ハンマーを使用してトラックパッドを破壊する関数
+        function useHammer() {
             const breakGeometry = new THREE.BoxGeometry(1, 0.1, 1);
             const breakMaterial = new THREE.MeshBasicMaterial({ color: '#dddddd' });
-
-            // 小さな破片を作成
             const piece = new THREE.Mesh(breakGeometry, breakMaterial);
-            piece.position.set(breakPositionX, 0.1, breakPositionZ);
+            piece.position.set(hammerPosition.x, 0.1, hammerPosition.z);
             scene.add(piece);
 
-            // 物理設定
             const shape = new Ammo.btBoxShape(new Ammo.btVector3(0.5, 0.05, 0.5));
-            createRigidBody(piece, shape, 0.5);  // 小さな破片に質量を与える
+            createRigidBody(piece, shape, 1);  // 動的な破片
         }
 
         // アニメーションループ
         function animate() {
             requestAnimationFrame(animate);
 
-            // Ammo.jsの物理計算を更新
             const deltaTime = 1 / 60;
+
+            // Ammo.js の物理シミュレーションを進める
             physicsWorld.stepSimulation(deltaTime, 10);
 
-            // 剛体オブジェクトの位置を更新
+            // 剛体の位置を更新
             rigidBodies.forEach(obj => {
-                const objBody = obj.userData.physicsBody;
-                if (objBody) {
-                    const motionState = objBody.getMotionState();
-                    if (motionState) {
-                        motionState.getWorldTransform(tmpTrans);
-                        const pos = tmpTrans.getOrigin();
-                        const quat = tmpTrans.getRotation();
-                        obj.position.set(pos.x(), pos.y(), pos.z());
-                        obj.quaternion.set(quat.x(), quat.y(), quat.z(), quat.w());
-                    }
+                const body = obj.userData.physicsBody;
+                const motionState = body.getMotionState();
+                if (motionState) {
+                    motionState.getWorldTransform(tmpTrans);
+                    const pos = tmpTrans.getOrigin();
+                    const quat = tmpTrans.getRotation();
+                    obj.position.set(pos.x(), pos.y(), pos.z());
+                    obj.quaternion.set(quat.x(), quat.y(), quat.z(), quat.w());
                 }
             });
 
