@@ -51,11 +51,6 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             document.body.appendChild(renderer.domElement);
 
-            // 簡単なライトを追加
-            const light = new THREE.DirectionalLight(0xffffff, 1);
-            light.position.set(5, 10, 7.5);
-            scene.add(light);
-
             // 物理ワールドの初期化
             const collisionConfiguration = new Ammo.btDefaultCollisionConfiguration();
             const dispatcher = new Ammo.btCollisionDispatcher(collisionConfiguration);
