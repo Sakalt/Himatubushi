@@ -48,7 +48,8 @@
             // Three.jsの基本セットアップ
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(0, 5, 15);  // カメラを適切な位置に配置
+            camera.position.set(0, 10, 20);  // カメラの位置を調整
+            camera.lookAt(0, 0, 0);  // トラックパッドの中心を見る
 
             renderer = new THREE.WebGLRenderer();
             renderer.setSize(window.innerWidth, window.innerHeight);
@@ -196,28 +197,29 @@
 
             // 物理設定
             const shape = new Ammo.btBoxShape(new Ammo.btVector3(0.5, 0.05, 0.5));
-            createRigidBody(piece, shape, 1);
+            createRigidBody(piece, shape, 0.5);  // 小さな破片に質量を与える
         }
 
         // アニメーションループ
         function animate() {
             requestAnimationFrame(animate);
 
+            // Ammo.jsの物理計算を更新
             const deltaTime = 1 / 60;
-
-            // Ammo.jsの物理シミュレーションを進める
             physicsWorld.stepSimulation(deltaTime, 10);
 
-            // 剛体の位置を更新
+            // 剛体オブジェクトの位置を更新
             rigidBodies.forEach(obj => {
-                const body = obj.userData.physicsBody;
-                const motionState = body.getMotionState();
-                if (motionState) {
-                    motionState.getWorldTransform(tmpTrans);
-                    const pos = tmpTrans.getOrigin();
-                    const quat = tmpTrans.getRotation();
-                    obj.position.set(pos.x(), pos.y(), pos.z());
-                    obj.quaternion.set(quat.x(), quat.y(), quat.z(), quat.w());
+                const objBody = obj.userData.physicsBody;
+                if (objBody) {
+                    const motionState = objBody.getMotionState();
+                    if (motionState) {
+                        motionState.getWorldTransform(tmpTrans);
+                        const pos = tmpTrans.getOrigin();
+                        const quat = tmpTrans.getRotation();
+                        obj.position.set(pos.x(), pos.y(), pos.z());
+                        obj.quaternion.set(quat.x(), quat.y(), quat.z(), quat.w());
+                    }
                 }
             });
 
