@@ -25,6 +25,7 @@
         <button onclick="moveHammer('left')">左に動かす</button>
         <button onclick="moveHammer('right')">右に動かす</button>
         <button onclick="useHammer()">ハンマーを使用</button>
+        <button onclick="fireLaser()">レーザーを発射</button>
     </div>
 
     <!-- Three.js と Ammo.js の読み込み -->
@@ -34,6 +35,7 @@
     <script>
         let scene, camera, renderer;
         let trackpad, hammer, rubberFeet = [];
+        let laser;
         let hammerPosition = { x: 0, y: 5, z: 0 };
         let physicsWorld, rigidBodies = [];
         let tmpTrans;
@@ -75,6 +77,10 @@
             // ハンマーを作成
             hammer = createHammer();
             scene.add(hammer);
+
+            // レーザーを作成
+            laser = createLaser();
+            scene.add(laser);
 
             // レンダリングループを開始
             animate();
@@ -137,6 +143,17 @@
             return hammerMesh;
         }
 
+        // レーザーの作成
+        function createLaser() {
+            const laserGeometry = new THREE.CylinderGeometry(0.05, 0.05, 10, 32);
+            const laserMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+            const laserMesh = new THREE.Mesh(laserGeometry, laserMaterial);
+            laserMesh.position.set(0, 5, -10);
+            laserMesh.rotation.x = Math.PI / 2; // 縦方向に向ける
+
+            return laserMesh;
+        }
+
         // Ammo.js の剛体を作成する
         function createRigidBody(object, physicsShape, mass) {
             const pos = object.position;
@@ -193,6 +210,18 @@
 
             const shape = new Ammo.btBoxShape(new Ammo.btVector3(0.5, 0.05, 0.5));
             createRigidBody(piece, shape, 1);  // 動的な破片
+        }
+
+        // レーザーを発射してトラックパッドに穴を開ける関数
+        function fireLaser() {
+            const hitGeometry = new THREE.CircleGeometry(0.5, 32);
+            const hitMaterial = new THREE.MeshBasicMaterial({ color: '#ff0000' });
+            const hitMesh = new THREE.Mesh(hitGeometry, hitMaterial);
+            hitMesh.position.set(0, 0.1, 0);  // トラックパッドの中心に穴を開ける
+            hitMesh.rotation.x = -Math.PI / 2; // 平面に合わせる
+            scene.add(hitMesh);
+
+            // 物理エンジンは不要なため、Ammo.js の設定は省略
         }
 
         // アニメーションループ
