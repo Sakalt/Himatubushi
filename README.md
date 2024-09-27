@@ -6,3 +6,4 @@ https://sakalt.github.io/Himatubushi/three/henkei/cloverphere.html
 https://sakalt.github.io/Himatubushi/prog/1.html
 https://sakalt.github.io/Himatubushi/prog/kanjiscript.html
 https://sakalt.github.io/Himatubushi/three/hakai/magictrackpad.html
+https://sakalt.github.io/Himatubushi/three/hakai/block.html
