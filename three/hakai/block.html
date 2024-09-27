@@ -42,7 +42,7 @@
 
         // 黒色の光るブロックを作成
         const blockGeometry = new THREE.BoxGeometry(1, 1, 1);
-        const blockMaterial = new THREE.MeshStandardMaterial({ color: 0x000000 });
+        const blockMaterial = new THREE.MeshStandardMaterial({ color: 0x121212 });
         const blockMesh = new THREE.Mesh(blockGeometry, blockMaterial);
         scene.add(blockMesh);
 
@@ -58,7 +58,7 @@
             const ctx = canvas.getContext('2d');
 
             // ランダムなフラクタルひび割れを描画
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.fillStyle = 'rgba(200, 200, 200, 0.1)';
             ctx.fillRect(0, 0, 1.25, 1.25);
 
             // ランダムなひび割れの生成
