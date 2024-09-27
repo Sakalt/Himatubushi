@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>氷の結晶ひび割れエフェクト</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+        #throwButton {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <button id="throwButton">チタンを投げる</button>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.rawgit.com/schteppe/cannon.js/master/build/cannon.min.js"></script>
+
+    <script>
+        // Three.jsのシーンをセットアップ
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // 照明を追加
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+        const pointLight = new THREE.PointLight(0xffffff, 1);
+        pointLight.position.set(10, 10, 10);
+        scene.add(pointLight);
+
+        // Cannon.jsのワールドをセットアップ
+        const world = new CANNON.World();
+        world.gravity.set(0, -9.82, 0);
+
+        // 黒色の光るブロックを作成
+        const blockGeometry = new THREE.BoxGeometry(1, 1, 1);
+        const blockMaterial = new THREE.MeshStandardMaterial({ color: 0x000000 });
+        const blockMesh = new THREE.Mesh(blockGeometry, blockMaterial);
+        scene.add(blockMesh);
+
+        const blockBody = new CANNON.Body({ mass: 5 });
+        blockBody.position.set(0, 0, 0);
+        world.addBody(blockBody);
+
+        // フラクタルひび割れの生成
+        function createCrackPattern() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 256;
+            canvas.height = 256;
+            const ctx = canvas.getContext('2d');
+
+            // ランダムなフラクタルひび割れを描画
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // ランダムなひび割れの生成
+            for (let i = 0; i < 100; i++) {
+                const x1 = Math.random() * canvas.width;
+                const y1 = Math.random() * canvas.height;
+                const x2 = Math.random() * canvas.width;
+                const y2 = Math.random() * canvas.height;
+
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.lineWidth = 1;
+                ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+                ctx.stroke();
+            }
+
+            const texture = new THREE.Texture(canvas);
+            texture.needsUpdate = true;
+            return texture;
+        }
+
+        // フラクタルひび割れテクスチャを作成
+        const crackTexture = createCrackPattern();
+
+        // ブロックを描画する関数
+        function render() {
+            world.step(1 / 60);
+            blockMesh.position.copy(blockBody.position);
+            blockMesh.quaternion.copy(blockBody.quaternion);
+            renderer.render(scene, camera);
+            requestAnimationFrame(render);
+        }
+
+        // チタンブロックを投げる関数
+        function throwTitanium() {
+            const titaniumGeometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
+            const titaniumMaterial = new THREE.MeshStandardMaterial({ color: 0xAAAAAA });
+            const titaniumMesh = new THREE.Mesh(titaniumGeometry, titaniumMaterial);
+            
+            const randomX = Math.random() * 10 - 5; // -5から5の範囲
+            const randomY = 10; // 高さ10から落下
+            const randomZ = Math.random() * 10 - 5;
+
+            titaniumMesh.position.set(randomX, randomY, randomZ);
+            scene.add(titaniumMesh);
+
+            const titaniumBody = new CANNON.Body({ mass: 1 });
+            titaniumBody.position.set(randomX, randomY, randomZ);
+            titaniumBody.velocity.set(0, -10, 0); // 下に向けて投げる
+            world.addBody(titaniumBody);
+
+            // 衝突判定
+            titaniumBody.addEventListener('collide', function(event) {
+                // ひび割れ処理
+                blockMesh.material.map = crackTexture; // フラクタルひび割れテクスチャを適用
+                blockMesh.material.needsUpdate = true; // マテリアルを更新
+
+                // ブロックを破壊（単純な例として赤く変更）
+                blockMesh.material.color.set(0xff0000); 
+                
+                scene.remove(titaniumMesh); // チタンブロックをシーンから削除
+                world.removeBody(titaniumBody); // チタンブロックを物理ワールドから削除
+            });
+        }
+
+        document.getElementById('throwButton').addEventListener('click', throwTitanium);
+
+        // レンダリングの開始
+        camera.position.z = 5;
+        render();
+    </script>
+</body>
+</html>
